@@ -1,0 +1,29 @@
+{
+  "name": "nxmad/eloquent-i18n",
+  "description": "Internationalization of Eloquent Models",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Alex Balatsky",
+      "email": "alex@skylex.pro"
+    }
+  ],
+  "minimum-stability": "stable",
+  "require": {
+    "php": "^7.0",
+    "laravel/framework": "5.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Nxmad\\EloquentI18n\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Nxmad\\EloquentI18n\\EloquentI18nProvider"
+      ]
+    }
+  }
+}
