@@ -1,5 +1,5 @@
 # Eloquent-i18n
-Internalization helper for Eloquent models.
+Internationalization helper for Eloquent models.
 
 ### Installation
 1. Pull the latest version using composer:
@@ -44,7 +44,8 @@ $page->translations = $translations;
 
 // Alt. way
 $page->addTranslations($translations);
-$page->addTranslations('title', 'Hello, world!'); // would add tra
+$page->addTranslations('title', 'Hello, world!'); // would add translation for current locale
+$page->addTranslations('title', 'Hello, world!', 'en'); // would add translation for specified locale
 
 $page->save();
 ```
@@ -73,7 +74,11 @@ app()->setLocale('en');
 echo $page->title; // Hello, world!
 
 // alt. way
-$page->getTranslations('title'); // $translations['title']
+$page->t('title', 'default value', 'locale');
 
+// get all translations for key
+$page->tAll('title');
+
+// serialize
 echo $page->toJson(); // { id, title, content, etc. }
 ```
