@@ -74,10 +74,11 @@ app()->setLocale('en');
 echo $page->title; // Hello, world!
 
 // alt. way
-$page->t('title', 'default value', 'locale');
+$page->getTranslation('title', 'default', 'en'); // Hello, world!
+$page->getTranslation('non-existing-key', 'default', 'en'); // default
 
 // get all translations for key
-$page->tAll('title');
+$page->getAllTranslations('title');
 
 // serialize
 echo $page->toJson(); // { id, title, content, etc. }

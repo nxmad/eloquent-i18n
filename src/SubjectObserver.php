@@ -17,10 +17,8 @@ class SubjectObserver
         $all = $subject->realTranslations;
 
         // Walking over existing translations
-        foreach ($subject->translations as $t)
-        {
-            if (! isset($all[$t->key][$t->locale]))
-            {
+        foreach ($subject->translations as $t) {
+            if (! isset($all[$t->key][$t->locale])) {
                 $t->delete();
 
                 continue;
@@ -33,10 +31,8 @@ class SubjectObserver
         }
 
         // Walking over remaining translations (they are probably new)
-        foreach ($all as $key => $translations)
-        {
-            foreach ($translations as $locale => $value)
-            {
+        foreach ($all as $key => $translations) {
+            foreach ($translations as $locale => $value) {
                 $subject->translations()
                     ->firstOrNew(compact('key', 'locale'))
                     ->fill(compact('value'))

@@ -60,7 +60,7 @@ trait HasTranslations
      *
      * @return string
      */
-    public function t($key, $default = null, $locale = null)
+    public function getTranslation($key, $default = null, $locale = null)
     {
         $locale = $locale ?? $this->getLocale();
         $fallback = $this->getFallbackLocale();
@@ -80,7 +80,7 @@ trait HasTranslations
      *
      * @return array
      */
-    public function tAll(string $key, $default = [])
+    public function getAllTranslations(string $key, $default = [])
     {
         return $this->realTranslations[$key] ?? $default;
     }
@@ -97,8 +97,7 @@ trait HasTranslations
      */
     public function addTranslations($key, $value = null, string $locale = null)
     {
-        if (is_array($key))
-        {
+        if (is_array($key)) {
             $this->translations = $key;
 
             return $this;
@@ -137,8 +136,7 @@ trait HasTranslations
             unset($this->realTranslations[$key][$locale]);
         }
 
-        if (! $key && $locale)
-        {
+        if (! $key && $locale) {
             foreach ($this->realTranslations as $k => $translations) {
                 unset($this->realTranslations[$k][$locale]);
             }
@@ -156,7 +154,7 @@ trait HasTranslations
      */
     public function getAttribute($key)
     {
-        return $this->t($key) ?? parent::getAttribute($key);
+        return $this->getTranslation($key) ?? parent::getAttribute($key);
     }
 
     /**
@@ -165,20 +163,19 @@ trait HasTranslations
      * @param $key
      * @param $value
      *
-     * @return mixed
+     * @return $this
      * @throws \Throwable
      */
     public function setAttribute($key, $value)
     {
-        if ($key === 'translations')
-        {
+        if ($key === 'translations') {
             throw_unless(is_array($value), \RuntimeException::class, '`translations` should be array');
 
             foreach ($value as $key => $translations) {
                 $this->addTranslations($key, $translations);
             }
 
-            return;
+            return $this;
         }
 
         return parent::setAttribute($key, $value);
@@ -197,8 +194,7 @@ trait HasTranslations
     {
         parent::setRelation($relation, $value);
 
-        if ($relation === 'translations')
-        {
+        if ($relation === 'translations') {
             foreach ($value as $t) {
                 $this->realTranslations[$t->key][$t->locale] = $t->value;
             }
@@ -210,19 +206,20 @@ trait HasTranslations
     }
 
     /**
-     * Convert model instance to JSON.
+     * Convert the model instance to an array.
      *
      * @return array
      */
-    public function jsonSerialize()
+    public function toArray()
     {
         $translatedAttributes = [];
 
         foreach (array_keys($this->realTranslations) as $key) {
-            $translatedAttributes[$key] = $this->serializeAllTranslations ? $this->tAll($key) : $this->t($key);
+            $translatedAttributes[$key] = $this->serializeAllTranslations ?
+                $this->getAllTranslations($key) : $this->getTranslation($key);
         }
 
-        return array_merge(parent::jsonSerialize(), $translatedAttributes);
+        return array_merge(parent::toArray(), $this->getArrayableItems($translatedAttributes));
     }
 
     /**
