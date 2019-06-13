@@ -16,11 +16,11 @@ trait HasTranslations
     public $realTranslations = [];
 
     /**
-     * Determines if original translations (relations) will hidden from JSON.
+     * Determines if original translations relation will be hidden from JSON.
      *
      * @var bool
      */
-    protected $hideTranslations = true;
+    // const HIDE_TRANSLATIONS = true;
 
     /**
      * Determines if all existing translations will be serialized to JSON.
@@ -28,7 +28,7 @@ trait HasTranslations
      *
      * @var bool
      */
-    protected $serializeAllTranslations = false;
+    // const SERIALIZE_ALL_TRANSLATIONS = false;
 
     /**
      * Eloquent boot hook.
@@ -69,7 +69,7 @@ trait HasTranslations
             return $default;
         }
 
-        return $this->realTranslations[$key][$locale] ?? ($this->realTranslations[$key][$fallback] ?? $default);
+        return $this->realTranslations[$key][$locale] ?? $this->realTranslations[$key][$fallback] ?? $default;
     }
 
     /**
@@ -199,7 +199,9 @@ trait HasTranslations
                 $this->realTranslations[$t->key][$t->locale] = $t->value;
             }
 
-            $this->makeHidden('translations');
+            if (! defined('self::HIDE_TRANSLATIONS') || self::HIDE_TRANSLATIONS === true) {
+                $this->makeHidden('translations');
+            }
         }
 
         return $this;
@@ -215,7 +217,7 @@ trait HasTranslations
         $translatedAttributes = [];
 
         foreach (array_keys($this->realTranslations) as $key) {
-            $translatedAttributes[$key] = $this->serializeAllTranslations ?
+            $translatedAttributes[$key] = defined('self::SERIALIZE_ALL_TRANSLATIONS') ?
                 $this->getAllTranslations($key) : $this->getTranslation($key);
         }
 
